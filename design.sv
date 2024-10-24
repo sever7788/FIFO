@@ -7,14 +7,13 @@ module FIFO
    input logic push,
    input logic pop,
    input logic [width-1:0] data,
-   output logic [$clog2(length-1)-1:0] push_ptr,
    output logic full,
    output logic empty,
    output logic [width-1:0] out 
 );
   logic [width-1:0][length-1:0] FIFO;
   logic [$clog2(length-1)-1:0] pop_ptr;
-  //logic [$clog2(length-1)-1:0] push_ptr;
+  logic [$clog2(length-1)-1:0] push_ptr;
   
   always_ff @(posedge clk or negedge rstn) begin
     if(!rstn) begin

@@ -6,18 +6,15 @@ module test
    output logic push,
    output logic pop,
    output logic [width-1:0] data,
-   input logic [$clog2(length-1)-1:0] push_ptr,
    input logic full,
    input logic empty,
    input logic [width-1:0] out 
 );
- 	
-    timeunit 1ns/1ns;
+  timeunit 1ns/1ns;
   
   FIFO  #(.width(4), .length(4)) dut(.*);
   
-
-	always #5 clk = ~clk;
+  always #5 clk = ~clk;
   
   initial begin
     $dumpfile("test.vcd");
@@ -34,8 +31,6 @@ module test
     end
     push = 0;
     pop = 1;
-
-    
     #100 $finish;
   end
  
