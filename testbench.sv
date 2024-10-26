@@ -1,4 +1,3 @@
-
 module test
   #(parameter width = 4, length = 4)
   (output logic clk,
@@ -8,7 +7,8 @@ module test
    output logic [width-1:0] data,
    input logic full,
    input logic empty,
-   input logic [width-1:0] out 
+   input logic [width-1:0] out,
+   input logic [length-1:0] SRAM [width-1:0]
 );
   timeunit 1ns/1ns;
   
@@ -24,12 +24,15 @@ module test
     push = 0;
     pop = 0;
     data = 0;
-	#15 rstn = 1;
+	  #10 rstn = 1;
     push = 1;
+    #5;
     for(int i = 0; i < 5; i++ ) begin
-      #15 data = i;
+      data = i;
+      #10;
     end
     push = 0;
+    #5;
     pop = 1;
     #100 $finish;
   end
