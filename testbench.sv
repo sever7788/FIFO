@@ -1,5 +1,5 @@
 module test
-  #(parameter width = 4, length = 4)
+  #(parameter width = 4, length = 5)
   (output logic clk,
    output logic rstn,
    output logic push,
@@ -8,11 +8,11 @@ module test
    input logic full,
    input logic empty,
    input logic [width-1:0] out,
-   input logic [length-1:0] SRAM [width-1:0]
+   input logic [width-1:0] SRAM [length-1:0]
 );
   timeunit 1ns/1ns;
   
-  FIFO  #(.width(4), .length(4)) dut(.*);
+  FIFO  #(.width(4), .length(5)) dut(.*);
   
   always #5 clk = ~clk;
   
@@ -26,15 +26,20 @@ module test
     data = 0;
 	  #10 rstn = 1;
     push = 1;
-    #5;
-    for(int i = 0; i < 5; i++ ) begin
+   
+    for(int i = 1; i < 7; i++ ) begin
       data = i;
       #10;
     end
     push = 0;
     #5;
     pop = 1;
-    #100 $finish;
+    #60 push = 1;
+    for(int i = 1; i < 7; i++ ) begin
+      data = i;
+      #10;
+    end
+    #200 $finish;
   end
  
 endmodule: test
