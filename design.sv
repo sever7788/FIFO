@@ -17,33 +17,41 @@ module FIFO
     //logic [length-1:0] SRAM [width-1:0];
     logic [ptr_len - 1:0] pop_ptr;
     logic [ptr_len - 1:0] push_ptr;
+    logic [ptr_len - 1:0] pop_ptr_next;
+    logic [ptr_len - 1:0] push_ptr_next;
+    logic flg;
     logic ptr_equal;
 
     always_ff @(posedge clk or negedge rstn) begin
         if(!rstn) begin
             for(int i = 0; i < length; i++)
                 SRAM[i]  <= '0;
-            empty    <=  1;
             pop_ptr  <= '0;
             push_ptr <= '0;
+            flg <= 1'b0;
         end else begin
+            push_ptr <= push_ptr_next;
+            pop_ptr  <= pop_ptr_next;
             if(!full && push) begin
                 SRAM[push_ptr] <= data;
-                push_ptr <= push_ptr == (length - 1) ? '0 : push_ptr + 1;
-                empty <= 0;
             end
             if(pop && !empty) begin
-                pop_ptr <= pop_ptr == (length - 1) ? '0 : pop_ptr + 1;
+
             end
+            if(push_ptr_next == pop_ptr_next) begin
+                if(push)
+                    flg <= 1'b1;
+            end else if(pop)
+                flg <= 1'b0;
         end
     end
 
-    always_ff @(posedge ptr_equal) begin
-        if(pop)
-            empty <= 1;
+    always_comb begin
+        push_ptr_next = (!full && push) ? ((push_ptr == (length - 1)) ? '0 : push_ptr + 1) : push_ptr;
+        pop_ptr_next =  (pop && !empty) ? ((pop_ptr == (length - 1)) ? '0 : pop_ptr + 1) : pop_ptr;
+        ptr_equal = push_ptr == pop_ptr;
+        empty = ptr_equal && !flg;
+        full  = ptr_equal && flg;
+        out = empty ? '0 : SRAM[pop_ptr];
     end
-
-    assign ptr_equal = push_ptr == pop_ptr;
-    assign full  = ptr_equal && !empty;
-    assign out = empty ? '0 : SRAM[pop_ptr];
 endmodule
